@@ -1,6 +1,6 @@
 
 {
-  "name": "Misaka-2.0 English",
+  "name": "Eugen",
   "description": "Telegram's sassiest group manager. Modular Telegram group management bot!",
   "keywords": [
     "telegram",
@@ -9,7 +9,7 @@
     "manager",
     "3"
   ],
-  "repository": "hhttps://github.com/Dank-del/Misaka-Mikoto",
+  "repository": "https://github.com/Dank-del/Eugen",
   "env": {
     "ENV": {
       "description": "Setting this to ANYTHING will enable env variables",
