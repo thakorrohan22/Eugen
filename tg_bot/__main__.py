@@ -34,13 +34,12 @@ If you're enjoying using me, and/or would like to help me survive in the wild, h
 
 HELP_STRINGS = """
 Hey there! My name is *{}*.
-I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
-the things I can help you with.
+I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of the \
+things I can help you with.
 
 *Main* commands available:
  - /start: start the bot
  - /help: PM's you this message.
-
 {}
 And the following:
 """.format(dispatcher.bot.first_name, "" if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
