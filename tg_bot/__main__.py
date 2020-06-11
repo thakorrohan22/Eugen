@@ -29,19 +29,18 @@ or feature requests you might have :)
 
 You can find the list of available commands with /help.
 
+If you're enjoying using me, and/or would like to help me survive in the wild, hit /donate to help fund/upgrade my VPS!
 """
 
 HELP_STRINGS = """
 Hey there! My name is *{}*.
-Hey there! My name is *{}*.
 I'm a modular group management bot with a few fun extras! Have a look at the following for an idea of some of \
-the things I can help you with
+the things I can help you with.
+
 *Main* commands available:
  - /start: start the bot
  - /help: PM's you this message.
- - /settings:
-   - in PM: will send you your settings for all supported modules.
-   - in a group: will redirect you to pm, with all that chat's settings.
+
 {}
 And the following:
 """.format(dispatcher.bot.first_name, "" if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
