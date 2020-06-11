@@ -395,6 +395,14 @@ __help__ = """
  - /scharacter <character>: returns information about the character.
  - /smanga <manga>: returns information about the manga.
  - /upcoming: returns a list of new anime in the upcoming seasons.
+
+ *#Last.FM*
+ Share what you're what listening to with the help of this module!
+
+*Available commands:*
+ - /setuser <username>: sets your last.fm username.
+ - /clearuser: removes your last.fm username from the bot's database.
+ - /lastfm: returns what you're scrobbling on last.fm.
 """
 
 __mod_name__ = "Misc"
