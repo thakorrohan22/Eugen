@@ -8,3 +8,4 @@ feedparser
 coffeehouse
 jikanpy
 simplejson
+speedtest
