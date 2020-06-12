@@ -1,7 +1,7 @@
 from math import ceil
 from typing import List, Dict
 
-from telegram import MAX_MESSAGE_LENGTH, InlineKeyboardButton, Bot, ParseMode
+from telegram import MAX_MESSAGE_LENGTH, InlineKeyboardButton, Bot, ParseMode, Update
 from telegram.error import TelegramError
 
 from tg_bot import LOAD, NO_LOAD
@@ -52,10 +52,8 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
              in module_dict.values()])
 
     pairs = [
-    modules[i * 3:(i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)
+        modules[i * 3:(i + 1) * 3] for i in range((len(modules) + 3 - 1) // 3)
     ]
-
-    
 
     round_num = len(modules) / 3
     calc = len(modules) - round(round_num)
@@ -63,6 +61,19 @@ def paginate_modules(page_n: int, module_dict: Dict, prefix, chat=None) -> List:
         pairs.append((modules[-1], ))
     elif calc == 2:
         pairs.append((modules[-1], ))
+
+    # max_num_pages = ceil(len(pairs) / 28)
+    # modulo_page = page_n % max_num_pages
+
+    # can only have a certain amount of buttons side by side
+
+    #if len(pairs) > 21:
+    #    pairs = pairs[modulo_page * 28:28]
+    # else:
+    #     pairs += [[
+    #         EqInlineKeyboardButton(tld(chat_id, 'btn_go_back'),
+    #                                callback_data="bot_start")
+    #     ]]
 
     return pairs
 
@@ -106,6 +117,7 @@ def revert_buttons(buttons):
 
 def is_module_loaded(name):
     return (not LOAD or name in LOAD) and name not in NO_LOAD
+
 
 def sendMessage(text: str, bot: Bot, update: Update):
     return bot.send_message(update.message.chat_id,
