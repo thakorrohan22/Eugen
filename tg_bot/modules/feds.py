@@ -33,7 +33,7 @@ from tg_bot.modules.disable import DisableAbleCommandHandler
 
 import tg_bot.modules.sql.feds_sql as sql
 
-from tg_bot.modules.tr_engine.strings import tld
+
 
 # Greeting all bot owners that is using this module,
 # The following people
