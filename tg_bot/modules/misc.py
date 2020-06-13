@@ -1,16 +1,21 @@
 import html
 import json
 import random
+import time
 from datetime import datetime
 from typing import Optional, List
+from subprocess import Popen, PIPE
+import speedtest
 
 import requests
 from telegram import Message, Chat, Update, Bot, MessageEntity
-from telegram import ParseMode
+from telegram import ParseMode, ReplyKeyboardRemove
 from telegram.ext import CommandHandler, run_async, Filters
 from telegram.utils.helpers import escape_markdown, mention_html
+from telegram.error import BadRequest, Unauthorized, TelegramError
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, SUPPORT_USERS, WHITELIST_USERS, BAN_STICKER
+from tg_bot.modules.sql.blacklistusers_sql import BLACKLIST_USERS
 from tg_bot.__main__ import GDPR
 from tg_bot.__main__ import STATS, USER_INFO
 from tg_bot.modules.disable import DisableAbleCommandHandler
@@ -130,6 +135,7 @@ HIT = (
     "bashes",
 )
 
+
 GMAPS_LOC = "https://maps.googleapis.com/maps/api/geocode/json"
 GMAPS_TIME = "https://maps.googleapis.com/maps/api/timezone/json"
 
@@ -148,23 +154,25 @@ def slap(bot: Bot, update: Update, args: List[str]):
 
     # get user who sent message
     if msg.from_user.username:
-        curr_user = "@" + escape_markdown(msg.from_user.username)
+        curr_user = msg.from_user.first_name.replace("<", "&lt;")
+        curr_user = curr_user.replace(">", "&gt;")
     else:
-        curr_user = "[{}](tg://user?id={})".format(msg.from_user.first_name, msg.from_user.id)
+        curr_user = """<a href="tg://user?id={}">{}</a>""".format(msg.from_user.id, msg.from_user.first_name)
 
     user_id = extract_user(update.effective_message, args)
     if user_id:
         slapped_user = bot.get_chat(user_id)
         user1 = curr_user
         if slapped_user.username:
-            user2 = "@" + escape_markdown(slapped_user.username)
+            user2 = slapped_user.first_name.replace("<", "&lt;")
+            user2 = user2.replace(">", "&gt;")
         else:
-            user2 = "[{}](tg://user?id={})".format(slapped_user.first_name,
-                                                   slapped_user.id)
+            user2 = """<a href="tg://user?id={}">{}</a>""".format(slapped_user.id,
+                                                   slapped_user.first_name)
 
     # if no target found, bot targets the sender
     else:
-        user1 = "[{}](tg://user?id={})".format(bot.first_name, bot.id)
+        user1 = """<a href="tg://user?id={}">{}</a>""".format(bot.id, bot.first_name)
         user2 = curr_user
 
     temp = random.choice(SLAP_TEMPLATES)
@@ -174,7 +182,7 @@ def slap(bot: Bot, update: Update, args: List[str]):
 
     repl = temp.format(user1=user1, user2=user2, item=item, hits=hit, throws=throw)
 
-    reply_text(repl, parse_mode=ParseMode.MARKDOWN)
+    reply_text(repl, parse_mode=ParseMode.HTML)
 
 
 @run_async
@@ -218,6 +226,7 @@ def get_id(bot: Bot, update: Update, args: List[str]):
 @run_async
 def info(bot: Bot, update: Update, args: List[str]):
     msg = update.effective_message  # type: Optional[Message]
+    chat = update.effective_chat # type: Optional[Chat]
     user_id = extract_user(update.effective_message, args)
 
     if user_id:
@@ -245,25 +254,31 @@ def info(bot: Bot, update: Update, args: List[str]):
     if user.username:
         text += "\nUsername: @{}".format(html.escape(user.username))
 
-    text += "\nPermanent user link: {}".format(mention_html(user.id, "link"))
+    text += "\nPermanent user link: {}".format(mention_html(user.id, user.first_name))
 
     if user.id == OWNER_ID:
-        text += "\n\nThis person is my owner - I would never do anything against them!"
+        text += "\n\nThis person is my owner."
     else:
-        if user.id in SUDO_USERS:
-            text += "\nThis person is one of my sudo users! " \
-                    "Nearly as powerful as my owner - so watch it."
+        if user.id in BLACKLIST_USERS:
+            pass
+
+        elif user.id in SUDO_USERS:
+            text += "\n\nThis person is one of my sudo users."
+                   
         else:
             if user.id in SUPPORT_USERS:
-                text += "\nThis person is one of my support users! " \
-                        "Not quite a sudo user, but can still gban you off the map."
+                text += "\n\nThis person is one of my support users." \
+                        
 
             if user.id in WHITELIST_USERS:
-                text += "\nThis person has been whitelisted! " \
+                text += "\n\nThis person has been whitelisted! " \
                         "That means I'm not allowed to ban/kick them."
 
     for mod in USER_INFO:
-        mod_info = mod.__user_info__(user.id).strip()
+        try:
+            mod_info = mod.__user_info__(user.id).strip()
+        except TypeError:
+            mod_info = mod.__user_info__(user.id, chat.id).strip()
         if mod_info:
             text += "\n\n" + mod_info
 
@@ -330,7 +345,7 @@ def gdpr(bot: Bot, update: Update):
         mod.__gdpr__(update.effective_user.id)
 
     update.effective_message.reply_text("Your personal data has been deleted.\n\nNote that this will not unban "
-                                        "you from any chats, as that is telegram data, not Eugen data. "
+                                        "you from any chats, as that is telegram data, not bot data. "
                                         "Flooding, warns, and gbans are also preserved, as of "
                                         "[this](https://ico.org.uk/for-organisations/guide-to-the-general-data-protection-regulation-gdpr/individual-rights/right-to-erasure/), "
                                         "which clearly states that the right to erasure does not apply "
@@ -339,27 +354,38 @@ def gdpr(bot: Bot, update: Update):
                                         parse_mode=ParseMode.MARKDOWN)
 
 
+def shell(command):
+    process = Popen(command,stdout=PIPE,shell=True,stderr=PIPE)
+    stdout,stderr = process.communicate()
+    return (stdout,stderr)
+
+def ram(bot: Bot, update: Update):
+    cmd = "ps -o pid"
+    output = shell(cmd)[0].decode()
+    processes = output.splitlines()
+    mem = 0
+    for p in processes[1:]:
+        mem += int(float(shell("ps u -p {} | awk ".format(p)+"'{sum=sum+$6}; END {print sum/1024}'")[0].decode().rstrip().replace("'","")))
+    update.message.reply_text(f"RAM usage = <code>{mem} MiB</code>", parse_mode=ParseMode.HTML)
+
+
 MARKDOWN_HELP = """
 Markdown is a very powerful formatting tool supported by telegram. {} has some enhancements, to make sure that \
 saved messages are correctly parsed, and to allow you to create buttons.
-
 - <code>_italic_</code>: wrapping text with '_' will produce italic text
 - <code>*bold*</code>: wrapping text with '*' will produce bold text
 - <code>`code`</code>: wrapping text with '`' will produce monospaced text, also known as 'code'
 - <code>[sometext](someURL)</code>: this will create a link - the message will just show <code>sometext</code>, \
 and tapping on it will open the page at <code>someURL</code>.
 EG: <code>[test](example.com)</code>
-
 - <code>[buttontext](buttonurl:someURL)</code>: this is a special enhancement to allow users to have telegram \
 buttons in their markdown. <code>buttontext</code> will be what is displayed on the button, and <code>someurl</code> \
 will be the url which is opened.
 EG: <code>[This is a button](buttonurl:example.com)</code>
-
 If you want multiple buttons on the same line, use :same, as such:
 <code>[one](buttonurl://example.com)
 [two](buttonurl://google.com:same)</code>
 This will create two buttons on a single line, instead of one button per line.
-
 Keep in mind that your message <b>MUST</b> contain some text other than just a button!
 """.format(dispatcher.bot.first_name)
 
@@ -378,6 +404,98 @@ def stats(bot: Bot, update: Update):
     update.effective_message.reply_text("Current stats:\n" + "\n".join([mod.__stats__() for mod in STATS]))
 
 
+@run_async 
+def ping(bot: Bot, update: Update):
+    start_time = time.time()
+    requests.get('https://api.telegram.org')
+    end_time = time.time()
+    ping_time = round((end_time - start_time)*1000, 3)
+    update.effective_message.reply_text("*Pong!!!*\n`{}ms`".format(ping_time), parse_mode=ParseMode.MARKDOWN)
+
+
+@run_async
+def sudo_list(bot: Bot, update: Update):
+    reply = "<b>Sudo Users:</b>\n"
+    for sudo in SUDO_USERS:
+        user_id = int(sudo) # Ensure int
+        user = bot.get_chat(user_id)
+        first_name = user.first_name
+        reply += """• <a href="tg://user?id={}">{}</a>\n""".format(user_id, first_name)
+    update.effective_message.reply_text(reply, parse_mode=ParseMode.HTML)
+
+
+@run_async
+def support_list(bot: Bot, update: Update):
+    reply = "<b>Support Users:</b>\n"
+    for support in SUPPORT_USERS:
+        user_id = int(support) # Ensure int
+        user = bot.get_chat(user_id)
+        first_name = user.first_name.replace(">", "&gt;")
+        first_name = first_name.replace("<", "&lt;")
+        reply += """• <a href="tg://user?id={}">{}</a>\n""".format(user_id, first_name)
+    update.effective_message.reply_text(reply, parse_mode=ParseMode.HTML)
+
+
+def convert(speed):
+	return round(int(speed)/1048576, 2) # bits to megabits
+
+@run_async	
+def speed_test(bot: Bot, update: Update):
+	test = speedtest.Speedtest()
+	test.get_best_server()
+	test.download()
+	test.upload()
+	result = test.results.dict()
+	
+	reply = "*Speedtest Results:*\n"
+	reply += f"Download: `{convert(result['download'])} Mb/s`\n"
+	reply += f"Upload: `{convert(result['upload'])} Mb/s`\n"
+	reply += f"Ping: `{result['ping']}`\n"
+	reply += f"ISP: `{result['client']['isp']}`"
+	update.effective_message.reply_text(reply, parse_mode=ParseMode.MARKDOWN)
+
+
+@run_async
+def remove_keyboard(bot: Bot, update: Update):
+    chat = update.effective_chat.id
+    text = "Removing keyboards..."
+    msg = bot.send_message(chat, text, reply_markup=ReplyKeyboardRemove(selective=False))
+    msg.delete()
+    bot.send_message(chat, "Done!")
+
+
+@run_async
+def leave_chat(bot: Bot, update: Update, args):
+    try:
+        chat_id = args[0]
+    except IndexError:
+        chat_id = None
+    msg = update.effective_message
+    if not chat_id:
+        msg.reply_text("Which chat should I leave?")
+        return
+    try:
+        chat = bot.get_chat(chat_id)
+    except BadRequest:
+        msg.reply_text("Give me a valid ID!")
+        return
+    reason = " ".join(args[1:])
+    if reason:
+        try:
+            chat.send_message(
+                f"I'm outta here!\nReason: <code>{reason}</code>",
+                parse_mode="HTML"
+            )
+        except BadRequest:
+            pass
+        except Unauthorized:
+            pass
+    try:
+        chat.leave()
+    except TelegramError as e:
+        msg.reply_text(f"Couldn't leave chat:\n{e}") 
+    
+
 # /ip is for private use
 __help__ = """
  - /id: get the current group id. If used by replying to a message, gets that user's id.
@@ -385,7 +503,6 @@ __help__ = """
  - /slap: slap a user, or get slapped if not a reply.
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
-
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
  
  *#MyAnimeList*
@@ -395,10 +512,8 @@ __help__ = """
  - /scharacter <character>: returns information about the character.
  - /smanga <manga>: returns information about the manga.
  - /upcoming: returns a list of new anime in the upcoming seasons.
-
  *#Last.FM*
  Share what you're what listening to with the help of this module!
-
 *Available commands:*
  - /setuser <username>: sets your last.fm username.
  - /clearuser: removes your last.fm username from the bot's database.
@@ -416,11 +531,18 @@ RUNS_HANDLER = DisableAbleCommandHandler("runs", runs)
 SLAP_HANDLER = DisableAbleCommandHandler("slap", slap, pass_args=True)
 INFO_HANDLER = DisableAbleCommandHandler("info", info, pass_args=True)
 
-ECHO_HANDLER = CommandHandler("echo", echo, filters=Filters.user(OWNER_ID))
+ECHO_HANDLER = CommandHandler("echo", echo, filters=CustomFilters.sudo_filter)
+RAM_HANDLER = CommandHandler("ram", ram, filters=CustomFilters.sudo_filter)
 MD_HELP_HANDLER = CommandHandler("markdownhelp", markdown_help, filters=Filters.private)
 
 STATS_HANDLER = CommandHandler("stats", stats, filters=CustomFilters.sudo_filter)
 GDPR_HANDLER = CommandHandler("gdpr", gdpr, filters=Filters.private)
+PING_HANDLER = DisableAbleCommandHandler("ping", ping)
+SUDO_LIST_HANDLER = CommandHandler("sudolist", sudo_list, filters=CustomFilters.sudo_filter | CustomFilters.support_filter)
+SUPPORT_LIST_HANDLER = CommandHandler("supportlist", support_list, filters=CustomFilters.sudo_filter | CustomFilters.support_filter)
+SPEEDTEST_HANDLER = CommandHandler("speed", speed_test, filters=CustomFilters.sudo_filter)
+REMOVE_KB_HANDLER = CommandHandler(["clearkeys", "nokeyboard"], remove_keyboard, filters=Filters.group)
+LEAVE_CHAT_HANDLER = CommandHandler(["leave", "yeet"], leave_chat, filters=Filters.user(OWNER_ID), pass_args=True)
 
 dispatcher.add_handler(ID_HANDLER)
 dispatcher.add_handler(IP_HANDLER)
@@ -431,4 +553,11 @@ dispatcher.add_handler(INFO_HANDLER)
 dispatcher.add_handler(ECHO_HANDLER)
 dispatcher.add_handler(MD_HELP_HANDLER)
 dispatcher.add_handler(STATS_HANDLER)
+dispatcher.add_handler(RAM_HANDLER)
 dispatcher.add_handler(GDPR_HANDLER)
+dispatcher.add_handler(PING_HANDLER)
+dispatcher.add_handler(SUDO_LIST_HANDLER)
+dispatcher.add_handler(SUPPORT_LIST_HANDLER)
+dispatcher.add_handler(SPEEDTEST_HANDLER)
+dispatcher.add_handler(REMOVE_KB_HANDLER)
+dispatcher.add_handler(LEAVE_CHAT_HANDLER)
