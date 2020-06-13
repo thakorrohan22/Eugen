@@ -10,3 +10,4 @@ jikanpy
 simplejson
 speedtest-cli
 Pillow>=4.2.0
+tswift
