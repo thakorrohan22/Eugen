@@ -503,6 +503,7 @@ __help__ = """
  - /slap: slap a user, or get slapped if not a reply.
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
+ - /lyrics <song>: returns the lyrics of that song.
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
  
  *#MyAnimeList*
