@@ -1,6 +1,8 @@
 # tgbot
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
+[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge)
+
 Originally a simple group management bot with multiple admin features, it has evolved into becoming a basis for modular
 bots aiming to provide simple plugin expansion via a simple drag and drop.
 
