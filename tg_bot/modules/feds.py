@@ -1,22 +1,16 @@
-import html
 from io import BytesIO
 from typing import Optional, List
-import random
 import uuid
 import re
 import json
 import time
-from time import sleep
-
-from future.utils import string_types
 from telegram.error import BadRequest, TelegramError, Unauthorized
 from telegram import ParseMode, Update, Bot, Chat, User, MessageEntity, InlineKeyboardMarkup, InlineKeyboardButton
-from telegram.ext import run_async, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
-from telegram.utils.helpers import escape_markdown, mention_html, mention_markdown
+from telegram.ext import run_async, CommandHandler, CallbackQueryHandler
+from telegram.utils.helpers import mention_html, mention_markdown
 
 from tg_bot import dispatcher, OWNER_ID, SUDO_USERS, WHITELIST_USERS, MESSAGE_DUMP, LOGGER
-from tg_bot.modules.helper_funcs.handlers import CMD_STARTERS
-from tg_bot.modules.helper_funcs.misc import is_module_loaded, send_to_list
+from tg_bot.modules.helper_funcs.misc import send_to_list
 from tg_bot.modules.helper_funcs.chat_status import is_user_admin
 from tg_bot.modules.helper_funcs.extraction import extract_user, extract_user_and_text
 from tg_bot.modules.helper_funcs.string_handling import markdown_parser
