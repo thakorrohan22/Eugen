@@ -504,6 +504,7 @@ __help__ = """
  - /info: get information about a user.
  - /gdpr: deletes your information from the bot's database. Private chats only.
  - /lyrics <song>: returns the lyrics of that song.
+ - /ud <expression> :- Returns the top definition of the word or expression on Urban Dictionary.
  - /markdownhelp: quick summary of how markdown works in telegram - can only be called in private chats.
  
  *#MyAnimeList*

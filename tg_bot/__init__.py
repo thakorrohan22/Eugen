@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+import spamwatch
 
 import telegram.ext as tg
 
@@ -106,6 +107,15 @@ else:
 
 SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(895373440)
+
+# SpamWatch
+spamwatch_api = os.environ.get('sw_api', None)
+
+if spamwatch_api == "None":
+    sw = None
+    LOGGER.warning("SpamWatch API key is missing! Check your config.env.")
+else:
+    sw = spamwatch.Client(spamwatch_api)
 
 updater = tg.Updater(TOKEN, workers=WORKERS)
 
