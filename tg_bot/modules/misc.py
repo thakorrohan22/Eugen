@@ -518,6 +518,11 @@ __help__ = """
  - /setuser <username>: sets your last.fm username.
  - /clearuser: removes your last.fm username from the bot's database.
  - /lastfm: returns what you're scrobbling on last.fm.
+ *Stickers*
+ - /stickerid: reply to a sticker to get its ID.
+ - /getsticker: reply to a sticker to get the raw PNG image.
+ - /steal: reply to a sticker or image to add it to your pack.
+
 """
 
 __mod_name__ = "Misc"
