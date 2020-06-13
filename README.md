@@ -1,4 +1,4 @@
-# tgbot
+# Eugen
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
 [![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge)
