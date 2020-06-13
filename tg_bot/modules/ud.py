@@ -29,11 +29,6 @@ def ud(bot: Bot, update: Update):
     else:
         update.message.reply_text("No results found!")
 
-__help__ = """
- - /ud <expression> :- Returns the top definition of the word or expression on Urban Dictionary.
-"""
-
-__mod_name__ = "Urban Dictionary"
   
 ud_handle = DisableAbleCommandHandler("ud", ud)
 
