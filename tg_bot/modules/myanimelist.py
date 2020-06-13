@@ -3,7 +3,7 @@
 from jikanpy import Jikan
 from jikanpy.exceptions import APIException
 
-from telegram import Message, Chat, User, ParseMode, Update, Bot, InlineKeyboardMarkup, InlineKeyboardButton
+from telegram import ParseMode, Update, Bot, InlineKeyboardMarkup, InlineKeyboardButton
 from telegram.ext import CommandHandler,  run_async
 
 from tg_bot import dispatcher
