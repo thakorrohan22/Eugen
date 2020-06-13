@@ -9,3 +9,4 @@ coffeehouse
 jikanpy
 simplejson
 speedtest-cli
+Pillow>=4.2.0
