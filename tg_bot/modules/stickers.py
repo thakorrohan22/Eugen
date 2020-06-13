@@ -228,13 +228,6 @@ def makepack_internal(msg, user, png_sticker, emoji, bot, packname, packnum):
         msg.reply_text("Failed to create sticker pack.")
 
 
-__help__ = """
-- /stickerid: reply to a sticker to get its ID.
-- /getsticker: reply to a sticker to get the raw PNG image.
-- /steal: reply to a sticker or image to add it to your pack.
-"""
-
-__mod_name__ = "Stickers"
 STICKERID_HANDLER = DisableAbleCommandHandler("stickerid", stickerid)
 GETSTICKER_HANDLER = DisableAbleCommandHandler("getsticker", getsticker)
 STEAL_HANDLER = DisableAbleCommandHandler("steal", steal, pass_args=True, admin_ok=False)
