@@ -1,3 +1,4 @@
+![Eugen](https://images4.alphacoders.com/946/946354.jpg)
 # Eugen
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
