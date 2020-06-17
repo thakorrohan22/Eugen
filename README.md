@@ -2,7 +2,7 @@
 # Eugen
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
-[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge)
+[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge) [![Maintainability](https://api.codeclimate.com/v1/badges/2202b6b119c2e271b8d5/maintainability)](https://codeclimate.com/github/Dank-del/Eugen/maintainability)
 
 Originally a simple group management bot with multiple admin features, it has evolved into becoming a basis for modular
 bots aiming to provide simple plugin expansion via a simple drag and drop.
@@ -33,7 +33,7 @@ Once you've setup your database and your configuration (see below) is complete, 
 
 `python3 -m tg_bot`
 
-
+ 
 ## Setting up the bot (Read this before trying to use!):
 Please make sure to use python3.6, as I cannot guarantee everything will work as expected on older python versions!
 This is because markdown parsing is done by iterating through a dict, which are ordered by default in 3.6.
