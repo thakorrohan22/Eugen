@@ -2,9 +2,7 @@
 # Eugen
 A modular telegram Python bot running on python3 with an sqlalchemy database.
 
-[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge)
-
-[![Maintainability](https://api.codeclimate.com/v1/badges/2202b6b119c2e271b8d5/maintainability)](https://codeclimate.com/github/Dank-del/Eugen/maintainability)
+[![DeepSource](https://static.deepsource.io/deepsource-badge-light-mini.svg)](https://deepsource.io/gh/Dank-del/Eugen/?ref=repository-badge) [![Maintainability](https://api.codeclimate.com/v1/badges/2202b6b119c2e271b8d5/maintainability)](https://codeclimate.com/github/Dank-del/Eugen/maintainability)
 
 Originally a simple group management bot with multiple admin features, it has evolved into becoming a basis for modular
 bots aiming to provide simple plugin expansion via a simple drag and drop.
