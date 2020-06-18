@@ -37,23 +37,18 @@ I'm a modular group management bot with a few fun extras! Have a look at the fol
 the things I can help you with.
 
 *Main* commands available:
- - /start: start the bot
- - /help: PM's you this message.
- - /settings:
-     - in PM: will send you your settings for all supported modules.
-     - in a group: will redirect you to pm, with all that chat's settings.
-
+- /start: start the bot
+- /help: PM's you this message.
+- /settings:
+    - in PM: will send you your settings for all supported modules.
+    - in a group: will redirect you to pm, with all that chat's settings.
 {}
 And the following:
 """.format(dispatcher.bot.first_name, "" if not ALLOW_EXCL else "\nAll commands can either be used with / or !.\n")
 
 EUGEN_IMG = "https://telegra.ph/file/cbc8778ccb632e2cc7198.jpg"
 
-DONATE_STRING = """Heya, glad to hear you want to donate!
-It took lots of work for my creator to get me to where I am now, and every donation helps \
-motivate him to make me even better. All the donation money will go to a better VPS to host me, and/or beer \
-(see his bio!). He's just a poor student, so every little helps!
-There are two ways of paying him; [PayPal](paypal.me/PaulSonOfLars), or [Monzo](monzo.me/paulnionvestergaardlarsen)."""
+DONATE_STRING = """I'm free for everyone!"""
 
 IMPORTED = {}
 MIGRATEABLE = []
