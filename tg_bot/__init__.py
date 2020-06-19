@@ -3,6 +3,7 @@ import os
 import sys
 import spamwatch
 
+from telethon import TelegramClient
 import telegram.ext as tg
 
 # enable logging
@@ -60,6 +61,8 @@ if ENV:
     ALLOW_EXCL = os.environ.get('ALLOW_EXCL', False)
     AI_API_KEY = os.environ.get('AI_API_KEY', "")
     LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY', "")
+    API_KEY = os.environ.get('API_KEY',"")
+    API_HASH = os.environ.get('API_HASH')
 
 else:
     from tg_bot.config import Development as Config
@@ -103,6 +106,8 @@ else:
     ALLOW_EXCL = Config.ALLOW_EXCL
     LASTFM_API_KEY = Config.LASTFM_API_KEY
     AI_API_KEY = Config.AI_API_KEY
+    API_KEY = Config.API_KEY
+    API_HASH = Config.API_HASH
 
 
 SUDO_USERS.add(OWNER_ID)
