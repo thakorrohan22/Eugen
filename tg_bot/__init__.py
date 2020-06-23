@@ -114,6 +114,10 @@ else:
 SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(895373440)
 
+telethon = TelegramClient("tg_bot", API_ID, API_HASH)
+updater = tg.Updater(TOKEN, workers=WORKERS)
+dispatcher = updater.dispatcher
+
 # SpamWatch
 spamwatch_api = os.environ.get('sw_api', None)
 
