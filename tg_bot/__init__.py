@@ -114,7 +114,7 @@ else:
 SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(895373440)
 
-telethon = TelegramClient("tg_bot", API_ID, API_HASH)
+telethon = TelegramClient("tg_bot", API_KEY, API_HASH)
 updater = tg.Updater(TOKEN, workers=WORKERS)
 dispatcher = updater.dispatcher
 
