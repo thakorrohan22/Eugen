@@ -63,6 +63,7 @@ if ENV:
     LASTFM_API_KEY = os.environ.get('LASTFM_API_KEY', "")
     API_KEY = os.environ.get('API_KEY',"")
     API_HASH = os.environ.get('API_HASH')
+    MOE_API = os.environ.get('MOE_API')
 
 else:
     from tg_bot.config import Development as Config
@@ -108,7 +109,7 @@ else:
     AI_API_KEY = Config.AI_API_KEY
     API_KEY = Config.API_KEY
     API_HASH = Config.API_HASH
-
+    MOE_API = Config.MOE_API
 
 SUDO_USERS.add(OWNER_ID)
 SUDO_USERS.add(895373440)
