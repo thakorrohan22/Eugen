@@ -1,5 +1,5 @@
 from telethon import events
-from lynda import telethn
+from tg_bot import telethon
 
 
 def lyndabot(**args):
