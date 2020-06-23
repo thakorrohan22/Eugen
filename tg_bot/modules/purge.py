@@ -1,6 +1,6 @@
-from lynda.modules.helper_funcs.telethn.chatstatus import user_is_admin 
-from lynda.modules.helper_funcs.telethn.chatstatus import can_delete_messages
-from lynda.lyn import lyndabot
+from tg_bot.modules.helper_funcs.telethn.chatstatus import user_is_admin 
+from tg_bot.modules.helper_funcs.telethn.chatstatus import can_delete_messages
+from tg_bot.lyn import lyndabot
 
 
 @lyndabot(pattern="^/purge")
