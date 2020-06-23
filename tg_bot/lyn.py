@@ -10,7 +10,7 @@ def lyndabot(**args):
         args['pattern'] = '(?i)' + pattern
     args['pattern'] = pattern.replace('^/', r_pattern, 1)
     def decorator(func):
-        telethn.add_event_handler(func, events.NewMessage(**args))
+        telethon.add_event_handler(func, events.NewMessage(**args))
         return func
     return decorator
 
@@ -21,7 +21,7 @@ def inlinequery(**args):
     if pattern is not None and not pattern.startswith('(?i)'):
         args['pattern'] = '(?i)' + pattern
     def decorator(func):
-        telethn.add_event_handler(func, events.InlineQuery(**args))
+        telethon.add_event_handler(func, events.InlineQuery(**args))
         return func
     return decorator
 
@@ -29,7 +29,7 @@ def inlinequery(**args):
 def userupdate(**args):
     """User updates."""
     def decorator(func):
-        telethn.add_event_handler(func, events.UserUpdate(**args))
+        telethon.add_event_handler(func, events.UserUpdate(**args))
         return func
     return decorator
 
@@ -37,7 +37,7 @@ def userupdate(**args):
 def callbackquery(**args):
     """Callback query."""
     def decorator(func):
-        telethn.add_event_handler(func, events.CallbackQuery(**args))
+        telethon.add_event_handler(func, events.CallbackQuery(**args))
         return func
     return decorator
 
@@ -45,6 +45,6 @@ def callbackquery(**args):
 def chataction(**args):
     """Chat actions."""
     def decorator(func):
-        telethn.add_event_handler(func, events.ChatAction(**args))
+        telethon.add_event_handler(func, events.ChatAction(**args))
         return func
     return decorator
